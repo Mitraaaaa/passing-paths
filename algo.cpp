@@ -1,16 +1,18 @@
 #include<bits/stdc++.h>
 using namespace std;
 using ll=long long;
-#define mx 100
+#define mx 10000
 
 ll dist[mx][mx],plc_num=0;
 vector<ll>nodes_in_shortest_path[mx][mx]; // shortest path between i and j includes nodes that are stored in vector[i][j].size()
 bool pathway_taken=0;
  // a map to set int val to char inorder to have two dimentional (kinda a dictionary) -task2
-map<string,ll> dic;
+map<string,ll> encrypt;
+map<ll,string>decrypt;
 
 // task 2 A
 void get_pathways(){
+    // nodes normally are max meaning that there is no way btwn them
      for(ll i=0;i<mx;i++)
         for(ll j=0;j<mx;j++) dist[i][j]=__INT_MAX__;
     pathway_taken=1;
@@ -23,16 +25,18 @@ void get_pathways(){
     for(int i=0;i<n;i++){
         cin>>a>>b>>x;
         // assign a int to each char 
-        if(dic[a]==0){
-             dic[a]=cnt;
+        if(encrypt[a]==0){
+             encrypt[a]=cnt;
+             decrypt[cnt]=a;
              cnt++;
         }
-        if(dic[b]==0){
-             dic[b]=cnt;
+        if(encrypt[b]==0){
+             encrypt[b]=cnt;
+             decrypt[cnt]=b;
              cnt++;
         }
-        dist[dic[a]][dic[b]]=x;
-        dist[dic[b]][dic[a]]=x;
+        dist[encrypt[a]][encrypt[b]]=x;
+        dist[encrypt[b]][encrypt[a]]=x;
     }
     // save number of distinct places;
     plc_num=cnt-1;
@@ -74,8 +78,20 @@ void dijkstra(ll src,ll end, vector<ll>path[],ll length[]){
         visited[vnear]=1;
     }
 }
+void print_shortest_path(vector<ll>path[],int pos,int src,bool first_time){
+    if(path[pos].size()==0|| pos==src ){
+        cout<<endl;
+        return;
+    }
+    for(int i=0;i<path[pos].size();i++){
+        if(first_time) cout<<decrypt[pos]<<' ';
+            cout<<decrypt[path[pos][i]]<<' ';
+            print_shortest_path(path,path[pos][i],src,0);
+    }
+}
 
 void going_to_target(){
+    // finding shortest path from start to the target place
     while(!pathway_taken){
         cout<<"Please enter the pathway\n";
         get_pathways();
@@ -87,8 +103,9 @@ void going_to_target(){
     cin>>b;
     vector<ll> path[plc_num+1];
     ll length[plc_num+1];
-    dijkstra(dic[a],dic[b],path,length);
-   // for(int i=1;i<=plc_num;i++) cout<<length[i]<<' '<<endl;
+    dijkstra(encrypt[a],encrypt[b],path,length);
+    cout<<"Shortest length from "<<a<<"to "<<b<<" is: "<<length[encrypt[b]]<<endl;
+    print_shortest_path(path,encrypt[b],encrypt[a],1);
 }
 
 int main(){
