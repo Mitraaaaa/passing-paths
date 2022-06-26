@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long ll;
+using ll = long long;
+#define mx 10000
 
 // part3
 // input : graph matrix(nxn) and n
@@ -17,7 +18,7 @@ ll minKey(vector<ll> key, vector<ll> mst, ll n)
 		}
 	return minindex;
 }
-void MinSumOfDist(vector<vector<ll>> graph, ll n)
+void MinSumOfDist(ll graph[mx][mx], ll n)
 {
 	//vector of mst graph
 	vector<ll> adj(n + 1);
@@ -52,7 +53,7 @@ void MinSumOfDist(vector<vector<ll>> graph, ll n)
 		SumOfDist += graph[i][adj[i]];
 	//print edgs of mst
 	for (ll i = 2; i <= n; i++)
-		cout << i << " - " << adj[i] << endl;
+		cout << decrypt[i] << " - " << decrypt[adj[i]] << endl;
 	//print sum of dist
 	cout << SumOfDist << endl;
 }
