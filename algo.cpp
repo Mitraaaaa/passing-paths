@@ -18,7 +18,11 @@ ll Dp[2000][10],visited_all=0,parent[100][1000];
 //-----------------------------------------------------------------
 
 //task1-definitions
-ll parking[100][100];
+#define mx1 100
+ll parking[mx1][mx1],square;
+pair<ll,ll>car_parent[mx1][mx1];
+pair<ll,ll>emptty,camera,desired_plc;
+bool visited[mx1][mx1],car_input_taken=0,possible_relocation=0;
 
 //-----------------------------------------------------------------
 
@@ -181,17 +185,53 @@ void pass_certain_nodes(){
 
 //-----------------------------------------------------------------
 // task1 
+
+bool valid(ll i , ll j){
+    return i>=0 && j>=0 && i<square && j<square && parking[i][j]!=-1;
+}
+
+void reloction(ll i, ll j ){
+    visited[i][j]=1;
+    if(i==desired_plc.first && j==desired_plc.second){
+        possible_relocation=1;
+        return;
+    }
+    if(!possible_relocation){
+        vector<pair<ll,ll>> possible_takes;
+        if(valid(i-2,j) && parking[i-2][j]==parking[i-1][j] && parking[i-1][j]!=0)
+            possible_takes.push_back({i-2,j});
+        if(valid(i+2,j) && parking[i+2][j]==parking[i+1][j] && parking[i+1][j]!=0)
+            possible_takes.push_back({i+2,j});
+        if(valid(i,j-2) && parking[i][j-2]==parking[i][j-1] && parking[i][j-1]!=0)
+            possible_takes.push_back({i,j-2});
+        if(valid(i,j+2) && parking[i][j+2]==parking[i][j+2] && parking[i][j+2]!=0)
+            possible_takes.push_back({i,j+2});
+
+        for(auto x:possible_takes){
+            if(!visited[x.first][x.second]){
+                car_parent[x.first][x.second]={i,j};
+                reloction(x.first,x.second);
+            }
+        }
+    }
+}
+
 void get_car(){
+    car_input_taken=1;
+
     ll car_num,n,x;
-    pair<ll,ll>pos,empty,camera;
+    pair<ll,ll>pos;
     cout<<"Enter square dimention: ";
     cin>>n;
     cout<<"Enter the empty space cell number: ";
     cin>>x;
-    empty.first=(x-1)/n,empty.second=(x-1)%n;
+    emptty.first=(x-1)/n,emptty.second=(x-1)%n;
+    parking[emptty.first][emptty.second]=0;
     cout<<"Enter the cell with camera number: ";
     cin>>x;
     camera.first=(x-1)/n,camera.second=(x-1)%n;
+    parking[camera.first][camera.second]=-1;
+
     // parking[n][n]
     cout<<"Enter the number of the car and it's cell numbers seperated by a space or enter\nexp->(1 2 3)\n when you are done enter -1\n";
     cin>>car_num;
@@ -204,17 +244,15 @@ void get_car(){
         cin>>car_num;
     }
     
-    // for(int i=0;i<n;i++){
-    //     for(int j=0;j<n;j++){
-    //         cout<<parking[i][j]<<' ';
-    //     }
-    //     cout<<endl;
-    // }
+    for(int i=0;i<n;i++)
+        for(int j=0;j<n;j++)
+            visited[i][j]=0;   
     
 }
 
 int main(){
     //pass_certain_nodes();
-    get_car();
+    //get_car();
+
     return 0;
 }
