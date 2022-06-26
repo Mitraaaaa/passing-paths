@@ -12,7 +12,7 @@ map<string,ll> encrypt;
 map<ll,string>decrypt;
 
 // Tsp part  & dynamic part Dp[2^n][n] max is n=19 --> 2^10=1024
-ll Dp[2000][10],visited_all=0,parent[10][1000];
+ll Dp[2000][10],visited_all=0,parent[100][1000];
 
 // task 2 A
 void get_pathways(){
@@ -130,7 +130,7 @@ ll tsp(ll mark, ll position,ll src){
                      ll newAns = dist[position][plc+1] + tsp( mark|(1<<(plc)),plc+1,src);
                     if(ans>newAns){
                         ans = newAns;
-                       // parent[position][mark]=plc;
+                        parent[position][mark]=plc+1;
                     }
             }
         }
@@ -146,12 +146,30 @@ void pass_certain_nodes(){
     cout<<"Enter your starting point: ";
     cin>>a;
     visited_all=(1<<(plc_num))-1;
-    bitset<8> x(visited_all);
-    cout<<x<<endl;
     for(ll i=0;i<2000;i++)
-        for(ll j=0;j<10;j++) Dp[i][j]=-1;
+        for(ll j=0;j<10;j++) Dp[i][j]=-1,parent[j][i]=-1;
+
+    for(ll i=0;i<100;i++)
+        for(ll j=0;j<1000;j++) parent[i][j]=-1;
 
     cout<<tsp(1<<(encrypt[a]-1),encrypt[a],encrypt[a])<<endl;
+
+    // printing the tsp path
+    int path[plc_num];
+    int path_counter = 0;
+    int cur_node = 1;
+    int cur_mask = 1;
+    do {
+        path[path_counter] = cur_node;
+        path_counter++;
+        cur_node = parent[cur_node][cur_mask];
+        cur_mask |= (1 << (cur_node-1));
+    } while(cur_node != -1);
+
+    cout<<"the path is: ";
+    for(int i=0;i<plc_num;i++) cout<<decrypt[path[i]]<<' ';
+    cout<<a<<endl;
+
 }
 
 int main(){
