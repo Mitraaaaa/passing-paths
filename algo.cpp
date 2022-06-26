@@ -198,13 +198,13 @@ void reloction(ll i, ll j ){
     }
     if(!possible_relocation){
         vector<pair<ll,ll>> possible_takes;
-        if(valid(i-2,j) && parking[i-2][j]==parking[i-1][j] && parking[i-1][j]!=0)
+        if(valid(i-2,j) && parking[i-2][j]==parking[i-1][j])
             possible_takes.push_back({i-2,j});
-        if(valid(i+2,j) && parking[i+2][j]==parking[i+1][j] && parking[i+1][j]!=0)
+        if(valid(i+2,j) && parking[i+2][j]==parking[i+1][j])
             possible_takes.push_back({i+2,j});
-        if(valid(i,j-2) && parking[i][j-2]==parking[i][j-1] && parking[i][j-1]!=0)
+        if(valid(i,j-2) && parking[i][j-2]==parking[i][j-1])
             possible_takes.push_back({i,j-2});
-        if(valid(i,j+2) && parking[i][j+2]==parking[i][j+2] && parking[i][j+2]!=0)
+        if(valid(i,j+2) && parking[i][j+2]==parking[i][j+1])
             possible_takes.push_back({i,j+2});
 
         for(auto x:possible_takes){
@@ -223,6 +223,7 @@ void get_car(){
     pair<ll,ll>pos;
     cout<<"Enter square dimention: ";
     cin>>n;
+    square=n;
     cout<<"Enter the empty space cell number: ";
     cin>>x;
     emptty.first=(x-1)/n,emptty.second=(x-1)%n;
@@ -232,8 +233,12 @@ void get_car(){
     camera.first=(x-1)/n,camera.second=(x-1)%n;
     parking[camera.first][camera.second]=-1;
 
+    cout<<"Enter the cell number desired to be empty: ";
+    cin>>x;
+    desired_plc.first=(x-1)/n,desired_plc.second=(x-1)%n;
+
     // parking[n][n]
-    cout<<"Enter the number of the car and it's cell numbers seperated by a space or enter\nexp->(1 2 3)\n when you are done enter -1\n";
+    cout<<"Enter the number of the car and it's cell numbers seperated by a space or enter\nexp->(1 2 3)\nwhen you are done enter -1\n";
     cin>>car_num;
     while(car_num!=-1){
         cin>>pos.first>>pos.second;
@@ -246,13 +251,44 @@ void get_car(){
     
     for(int i=0;i<n;i++)
         for(int j=0;j<n;j++)
-            visited[i][j]=0;   
+            visited[i][j]=0;  
+
+    //  for(int i=0;i<n;i++){
+    //     for(int j=0;j<n;j++)
+    //         cout<<parking[i][j]<<' ';
+    //     cout<<endl;
+    //  }
     
+}
+
+void count_print_relocate(){
+    while(!car_input_taken){
+        cout<<"Please enter inputs first:\n";
+        get_car();
+    }
+    reloction(emptty.first,emptty.second);
+    if(!possible_relocation)
+        cout<<"Not possible!\n";
+    else{
+        vector<ll>path;
+        ll i=desired_plc.first,j=desired_plc.second;
+        while(i!=emptty.first || j!=emptty.second){
+            path.push_back(parking[i][j]);
+            ll k=i;
+            i=car_parent[k][j].first;
+            j=car_parent[k][j].second;
+        }
+        cout<<"You need to relocate "<<path.size()<<" cars including: ";
+         reverse(path.begin(), path.end());
+        for(int x:path)
+            cout<<x<<" ";
+        cout << endl;
+    }
 }
 
 int main(){
     //pass_certain_nodes();
     //get_car();
-
+    count_print_relocate();
     return 0;
 }
