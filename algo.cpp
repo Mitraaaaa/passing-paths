@@ -6,9 +6,13 @@ using ll=long long;
 ll dist[mx][mx],plc_num=0;
 vector<ll>nodes_in_shortest_path[mx][mx]; // shortest path between i and j includes nodes that are stored in vector[i][j].size()
 bool pathway_taken=0;
+
  // a map to set int val to char inorder to have two dimentional (kinda a dictionary) -task2
 map<string,ll> encrypt;
 map<ll,string>decrypt;
+
+// Tsp part  & dynamic part Dp[2^n][n] max is n=19 --> 2^10=1024
+ll Dp[2000][10],visited_all=0,parent[10][1000];
 
 // task 2 A
 void get_pathways(){
@@ -16,15 +20,15 @@ void get_pathways(){
      for(ll i=0;i<mx;i++)
         for(ll j=0;j<mx;j++) dist[i][j]=__INT_MAX__;
     pathway_taken=1;
-    // the input can be enter by characters and their distances 
-    // exp -> A B 13 
+    // the input can be enter by characters and their distances
+    // exp -> A B 13
     // the max number of the places is mx --> dist[mx][mx]
     ll n,cnt=1,x;
     string a,b;
     cin>>n;
     for(int i=0;i<n;i++){
         cin>>a>>b>>x;
-        // assign a int to each char 
+        // assign a int to each char
         if(encrypt[a]==0){
              encrypt[a]=cnt;
              decrypt[cnt]=a;
@@ -78,6 +82,7 @@ void dijkstra(ll src,ll end, vector<ll>path[],ll length[]){
         visited[vnear]=1;
     }
 }
+
 void print_shortest_path(vector<ll>path[],int pos,int src,bool first_time){
     if(path[pos].size()==0|| pos==src ){
         cout<<endl;
@@ -108,7 +113,48 @@ void going_to_target(){
     print_shortest_path(path,encrypt[b],encrypt[a],1);
 }
 
+// task2-B
+
+ll tsp(ll mark, ll position,ll src){
+    if(mark==visited_all){
+         return dist[position][src];
+    }
+
+      if(Dp[mark][position]!=-1)
+            return Dp[mark][position];
+        
+        ll ans=__INT_MAX__;
+
+        for(ll plc=0;plc<plc_num;plc++){
+            if((mark&(1<<(plc)))==0 ){
+                     ll newAns = dist[position][plc+1] + tsp( mark|(1<<(plc)),plc+1,src);
+                    if(ans>newAns){
+                        ans = newAns;
+                       // parent[position][mark]=plc;
+                    }
+            }
+        }
+    return Dp[mark][position]=ans;
+}
+
+void pass_certain_nodes(){
+     while(!pathway_taken){
+        cout<<"Please enter the pathway\n";
+        get_pathways();
+    }
+    string a,b;
+    cout<<"Enter your starting point: ";
+    cin>>a;
+    visited_all=(1<<(plc_num))-1;
+    bitset<8> x(visited_all);
+    cout<<x<<endl;
+    for(ll i=0;i<2000;i++)
+        for(ll j=0;j<10;j++) Dp[i][j]=-1;
+
+    cout<<tsp(1<<(encrypt[a]-1),encrypt[a],encrypt[a])<<endl;
+}
+
 int main(){
-    going_to_target();
+    pass_certain_nodes();
     return 0;
 }
