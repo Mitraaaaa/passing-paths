@@ -1,10 +1,12 @@
 #include<bits/stdc++.h>
 using namespace std;
 using ll=long long;
-#define mx 10000
+#define mx 1000
 
-ll dist[mx][mx],plc_num=0;
-vector<ll>nodes_in_shortest_path[mx][mx]; // shortest path between i and j includes nodes that are stored in vector[i][j].size()
+// task2- definitions
+
+ll dist[mx][mx],plc_num=0,dp_flyd[mx][mx];
+vector<ll>nodes_in_shortest_path[mx][mx],nodes_btwn[mx][mx]; // shortest path between i and j includes nodes that are stored in vector[i][j].size()
 bool pathway_taken=0;
 
  // a map to set int val to char inorder to have two dimentional (kinda a dictionary) -task2
@@ -13,6 +15,16 @@ map<ll,string>decrypt;
 
 // Tsp part  & dynamic part Dp[2^n][n] max is n=19 --> 2^10=1024
 ll Dp[2000][10],visited_all=0,parent[100][1000];
+//-----------------------------------------------------------------
+
+//task1-definitions
+#define mx1 100
+ll parking[mx1][mx1],square;
+pair<ll,ll>car_parent[mx1][mx1];
+pair<ll,ll>emptty,camera,desired_plc;
+bool visited[mx1][mx1],car_input_taken=0,possible_relocation=0;
+
+//-----------------------------------------------------------------
 
 // task 2 A
 void get_pathways(){
@@ -137,28 +149,88 @@ ll tsp(ll mark, ll position,ll src){
     return Dp[mark][position]=ans;
 }
 
+void floyd(){
+    for(int i=1;i<=plc_num;i++){
+        for(int j=1;j<=plc_num;j++){
+            dp_flyd[i][j]=dist[i][j];
+        }
+    }
+    for(int k=1;k<=plc_num;k++){
+        for(int i=1;i<=plc_num;i++){
+            for(int j=1;j<=plc_num;j++){
+                if(dp_flyd[i][k]+dp_flyd[k][j]<dp_flyd[i][j]){
+                    dp_flyd[i][j]=dp_flyd[i][k]+dp_flyd[k][j];
+                    nodes_btwn[i][j].push_back(k);
+                }
+            }
+        }
+    }
+}
+
+void print_optimal_path(ll mask,ll path[],string a){
+    vector<ll>final_path,tmp;
+    final_path.push_back(path[0]);
+    ll cnt=2;
+    for(int i=1;i<plc_num;i++){
+        if(((1<<(path[i]-1)&mask) ==0)){
+                cnt=i;
+                while(((1<<(path[cnt]-1)&mask) ==0)){
+                    tmp.push_back(path[cnt]);
+                        cnt++;
+                }
+                for(auto x:tmp){
+                    if(find(nodes_btwn[i][cnt].begin(),nodes_btwn[i][cnt].end(),x)!=nodes_btwn[i][cnt].end()){
+                        final_path.push_back(x);
+                    }
+                tmp.clear();
+                i=cnt-1;
+            }
+        }
+        else final_path.push_back(path[i]);
+    }
+   final_path.push_back(encrypt[a]);
+    cnt=0;
+    for(ll i=0;i<final_path.size()-1;i++){
+        cnt+=dist[final_path[i]][final_path[i+1]];
+    }
+    cout<<"The optimal lenght is: "<<cnt<<endl;
+    cout<<"the path is: ";
+    for(auto x:final_path) cout<<decrypt[x]<<' ';
+}
+
 void pass_certain_nodes(){
      while(!pathway_taken){
         cout<<"Please enter the pathway\n";
         get_pathways();
     }
-    string a,b;
+    string a,b="";
     cout<<"Enter your starting point: ";
     cin>>a;
+    ll mask=(1<<(encrypt[a]-1));
+    cout<<"Enetr the nodes you wish to pass from "<<a<<" (enter -1 at the end):";
+    while(b!="-1"){
+        cin>>b;
+        mask|=(1<<(encrypt[b]-1));
+    }
+
+    // bitset<8> x(mask);
+    // cout<<x<<endl;
+
     visited_all=(1<<(plc_num))-1;
     for(ll i=0;i<2000;i++)
-        for(ll j=0;j<10;j++) Dp[i][j]=-1,parent[j][i]=-1;
+        for(ll j=0;j<10;j++) Dp[i][j]=-1;
 
     for(ll i=0;i<100;i++)
         for(ll j=0;j<1000;j++) parent[i][j]=-1;
 
+    cout<<"The Tsp length is: ";
     cout<<tsp(1<<(encrypt[a]-1),encrypt[a],encrypt[a])<<endl;
 
     // printing the tsp path
-    int path[plc_num];
-    int path_counter = 0;
-    int cur_node = 1;
-    int cur_mask = 1;
+    ll path[plc_num];
+    ll path_counter = 0;
+    ll cur_node = 1;
+    ll cur_mask = 1;
     do {
         path[path_counter] = cur_node;
         path_counter++;
@@ -166,13 +238,120 @@ void pass_certain_nodes(){
         cur_mask |= (1 << (cur_node-1));
     } while(cur_node != -1);
 
-    cout<<"the path is: ";
+    cout<<"the tsp path is: ";
     for(int i=0;i<plc_num;i++) cout<<decrypt[path[i]]<<' ';
     cout<<a<<endl;
+   floyd();
+   print_optimal_path(mask,path,a);
 
+}
+
+//-----------------------------------------------------------------
+// task1
+
+bool valid(ll i , ll j){
+    return i>=0 && j>=0 && i<square && j<square && parking[i][j]!=-1;
+}
+
+void reloction(ll i, ll j ){
+    visited[i][j]=1;
+    if(i==desired_plc.first && j==desired_plc.second){
+        possible_relocation=1;
+        return;
+    }
+    if(!possible_relocation){
+        vector<pair<ll,ll>> possible_takes;
+        if(valid(i-2,j) && parking[i-2][j]==parking[i-1][j])
+            possible_takes.push_back({i-2,j});
+        if(valid(i+2,j) && parking[i+2][j]==parking[i+1][j])
+            possible_takes.push_back({i+2,j});
+        if(valid(i,j-2) && parking[i][j-2]==parking[i][j-1])
+            possible_takes.push_back({i,j-2});
+        if(valid(i,j+2) && parking[i][j+2]==parking[i][j+1])
+            possible_takes.push_back({i,j+2});
+
+        for(auto x:possible_takes){
+            if(!visited[x.first][x.second]){
+                car_parent[x.first][x.second]={i,j};
+                reloction(x.first,x.second);
+            }
+        }
+    }
+}
+
+void get_car(){
+    car_input_taken=1;
+
+    ll car_num,n,x;
+    pair<ll,ll>pos;
+    cout<<"Enter square dimention: ";
+    cin>>n;
+    square=n;
+    cout<<"Enter the empty space cell number: ";
+    cin>>x;
+    emptty.first=(x-1)/n,emptty.second=(x-1)%n;
+    parking[emptty.first][emptty.second]=0;
+    cout<<"Enter the cell with camera number: ";
+    cin>>x;
+    camera.first=(x-1)/n,camera.second=(x-1)%n;
+    parking[camera.first][camera.second]=-1;
+
+    cout<<"Enter the cell number desired to be empty: ";
+    cin>>x;
+    desired_plc.first=(x-1)/n,desired_plc.second=(x-1)%n;
+
+    // parking[n][n]
+    cout<<"Enter the number of the car and it's cell numbers seperated by a space or enter\nexp->(1 2 3)\nwhen you are done enter -1\n";
+    cin>>car_num;
+    while(car_num!=-1){
+        cin>>pos.first>>pos.second;
+        // find the i and j of each car position
+        // 1<=pos.first<=n^2
+        parking[(pos.first-1)/n][(pos.first-1)%n]=car_num;
+        parking[(pos.second-1)/n][(pos.second-1)%n]=car_num;
+        cin>>car_num;
+    }
+    
+    for(int i=0;i<n;i++)
+        for(int j=0;j<n;j++)
+            visited[i][j]=0;
+
+    //  for(int i=0;i<n;i++){
+    //     for(int j=0;j<n;j++)
+    //         cout<<parking[i][j]<<' ';
+    //     cout<<endl;
+    //  }
+    
+}
+
+void count_print_relocate(){
+    while(!car_input_taken){
+        cout<<"Please enter inputs first:\n";
+        get_car();
+    }
+    reloction(emptty.first,emptty.second);
+    if(!possible_relocation)
+        cout<<"Not possible!\n";
+    else{
+        vector<ll>path;
+        ll i=desired_plc.first,j=desired_plc.second;
+        while(i!=emptty.first || j!=emptty.second){
+            path.push_back(parking[i][j]);
+            ll k=i;
+            i=car_parent[k][j].first;
+            j=car_parent[k][j].second;
+        }
+        cout<<"You need to relocate "<<path.size()<<" cars including: ";
+         reverse(path.begin(), path.end());
+        for(int x:path)
+            cout<<x<<" ";
+        cout << endl;
+    }
 }
 
 int main(){
     pass_certain_nodes();
+    //get_car();
+   // count_print_relocate();
     return 0;
 }
