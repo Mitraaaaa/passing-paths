@@ -6,7 +6,7 @@ Written by Mitra Omrani
 
 This project contains 4 tasks, each is discussed individually :
 
-# Task 1 :
+# Task 1 
 
 ## Question :
 Given Car's possition, claim if it's possible to move cars in their directions such way that the desired possition is empty.
@@ -46,6 +46,10 @@ The resault would be :
 <img src="guide/3.png" width="300">
 <img src="guide/1.png" width="700">
 
+One example for `not possible!` :
+
+<img src="guide/1-A.png" width="700">
+
 ## Algorithm's used in task1: Backtracking 
 * Strating from the empty possition we check all four neighbors and calculate each cars' move in those position.
 * We use Depth first search for finding the answer.
@@ -75,12 +79,13 @@ Example:
     a d 6
     a c 4
     b d 3
-
+    c
+    e
 
 * Given the starting and ending points it is abled to print all possible paths alongside the path's length.
 <img src="guide/task2A.png" width="800">
 
-## Algorithm's used in task2A: Dijkstra
+## Algorithm's used in task2-A: Dijkstra
 * Our starting point in dijkstra is the starting point and we find all shortest path from the starting point to all other points.
 * We save the length in an array including shortest path from starting point to all others and print our desired one at last.
 * We save the path in a array with vector type and recursively print the path from end to start.
@@ -88,3 +93,37 @@ Example:
 
 # Task2-B
 
+## Question :
+
+* Given the realtion between cities and starting , print the shortest path that we must pass by given certain cities.
+* In the end we must come back to our starting point, in other words print the cycle.
+
+## Query:
+1. Number of the relations between each two cities.
+2. Separate cities' name by a space and then enter the length between these two.
+3. Staring point 
+4. Must pass cities' name separated by space.
+5. when done enter `-1`
+
+Example:
+
+    8
+    a b 7
+    c b 2
+    d c 4
+    e d 1
+    a e 1
+    a d 6
+    a c 4
+    b d 3
+    a
+  
+<img src="guide/task2B.png" width="800">
+
+## Algorithm's used in task2-B: Floyed and Tsp
+* Tsp will give us the shortest cycle from a starting point.
+* Floyd will give us shortest path between each two city.
+* While applying the floyd algorithm we save the cities between each two cities  that make tha path shorter between that two.
+* We know that it is not necessary in this question that we pass all cities, so we check if we delete a city that is not in must-pass cities, would it make a shorter path or not. If so we decrease the lenght that adding that city in between would creat and we print the new path alongside the lenght of it.
+* So we use tsp, and check if can make a shorter path by deleting not must-pass cities.
+8 In the fromer example shown in the picture, we could see that if we don't pass `b` and `c` we could have a shorter path.
