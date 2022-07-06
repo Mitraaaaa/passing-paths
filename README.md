@@ -4,7 +4,7 @@ Algorithm design's Project
 Written by Mitra Omrani
 
 
-This project contains 4 tasks, each is discussed individually :
+This project contains 3 tasks, each is discussed individually :
 
 # Task 1 
 
@@ -127,3 +127,6 @@ Example:
 * We know that it is not necessary in this question that we pass all cities, so we check if we delete a city that is not in must-pass cities, would it make a shorter path or not. If so we decrease the lenght that adding that city in between would creat and we print the new path alongside the lenght of it.
 * So we use tsp, and check if can make a shorter path by deleting not must-pass cities.
 8 In the fromer example shown in the picture, we could see that if we don't pass `b` and `c` we could have a shorter path.
+
+# Task 3
+
