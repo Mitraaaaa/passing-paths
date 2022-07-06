@@ -121,7 +121,8 @@ void going_to_target(){
     vector<ll> path[plc_num+1];
     ll length[plc_num+1];
     dijkstra(encrypt[a],encrypt[b],path,length);
-    cout<<"Shortest length from "<<a<<"to "<<b<<" is: "<<length[encrypt[b]]<<endl;
+    cout<<"Shortest length from "<<a<<" to "<<b<<" is: "<<length[encrypt[b]]<<endl;
+    cout<<"the paths are :\n";
     print_shortest_path(path,encrypt[b],encrypt[a],1);
 }
 
@@ -196,6 +197,7 @@ void print_optimal_path(ll mask,ll path[],string a){
     cout<<"The optimal lenght is: "<<cnt<<endl;
     cout<<"the path is: ";
     for(auto x:final_path) cout<<decrypt[x]<<' ';
+    cout<<endl;
 }
 
 void pass_certain_nodes(){
@@ -355,7 +357,7 @@ void count_print_relocate(){
 ll minKey(vector<ll> key, vector<ll> mst, ll n)
 {
     //find vertex with min distance from set of vertices not included in mst
-    ll min = INT16_MAX, minindex;
+    ll min = __INT_MAX__, minindex;
     for (ll v = 1; v <= n; v++)
         if (!mst[v] && key[v] < min)
         {
@@ -364,6 +366,7 @@ ll minKey(vector<ll> key, vector<ll> mst, ll n)
         }
     return minindex;
 }
+
 void MinSumOfDist(ll graph[mx][mx], ll n)
 {
     //vector of mst graph
@@ -405,8 +408,20 @@ void MinSumOfDist(ll graph[mx][mx], ll n)
 }
 
 int main(){
-    pass_certain_nodes();
-    //get_car();
-   // count_print_relocate();
+    // task 1
+    get_car();
+    count_print_relocate();
+
+
+   // task 2A
+    // get_pathways();
+    // going_to_target();
+    // task 2B
+   // pass_certain_nodes();
+
+   // task-3
+//    get_pathways();
+//    MinSumOfDist(dist,plc_num);
+
     return 0;
 }
