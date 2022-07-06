@@ -1,6 +1,8 @@
 # Algorithm-design
 Algorithm design's Project
+
 Written by Mitra Omrani
+
 
 This project contains 4 tasks, each is discussed individually :
 
@@ -12,17 +14,13 @@ If it's possible print number of movements required and car's id number in order
 If it's not possible  print "impossible".
 
 ## Query :
-1.Squer dimension 
-
-2.Empty cell's position
-
-3.Cell's possition with Camera in it
-
-4.Cell's id number, desired to make empty 
-
-5.Number of cars
-
-Each car's id number and spaces it takes
+1. Squer dimension 
+2. Empty cell's position
+3. Cell's possition with Camera in it
+4. Cell's id number, desired to make empty 
+5. Number of cars
+6. Each car's id number and spaces it takes
+7. when done enter `-1`.
 
 Example :
 
@@ -56,7 +54,37 @@ The resault would be :
 
 # Task2-A
 
+## Question :
+
+* Given the relation between each two city, calculate shortest path from a given starting point to a given ending point.
+* Print the path alongside with path's length. 
+* Cities' path is two sided, meaning if the path's length from `a` to `b` is `18`, path's length is the same from `b` to `a`.
+
+## Query :
+1. Number of the relations between each two cities.
+2. Separate cities' name by a space and then enter the length between these two.
+
+Example:
+
+    8
+    a b 7
+    c b 2
+    d c 4
+    e d 1
+    a e 1
+    a d 6
+    a c 4
+    b d 3
 
 
+* Given the starting and ending points it is abled to print all possible paths alongside the path's length.
+<img src="guide/task2A.png" width="800">
 
+## Algorithm's used in task2A: Dijkstra
+* Our starting point in dijkstra is the starting point and we find all shortest path from the starting point to all other points.
+* We save the length in an array including shortest path from starting point to all others and print our desired one at last.
+* We save the path in a array with vector type and recursively print the path from end to start.
+
+
+# Task2-B
 
