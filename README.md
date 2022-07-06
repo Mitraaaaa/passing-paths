@@ -59,7 +59,6 @@ One example for `not possible!` :
 # Task2-A
 
 ## Question :
-
 * Given the relation between each two city, calculate shortest path from a given starting point to a given ending point.
 * Print the path alongside with path's length. 
 * Cities' path is two sided, meaning if the path's length from `a` to `b` is `18`, path's length is the same from `b` to `a`.
@@ -94,7 +93,6 @@ Example:
 # Task2-B
 
 ## Question :
-
 * Given the realtion between cities and starting , print the shortest path that we must pass by given certain cities.
 * In the end we must come back to our starting point, in other words print the cycle.
 
@@ -128,5 +126,32 @@ Example:
 * So we use tsp, and check if can make a shorter path by deleting not must-pass cities.
 8 In the fromer example shown in the picture, we could see that if we don't pass `b` and `c` we could have a shorter path.
 
+
 # Task 3
 
+## Question :
+* Given the relation between each two cities, print relations that include all citiies, and from each can reach to another.
+* You should be able to go from any chosen cities to another one, meaning all cities must can be reached from one another.
+
+## Query :
+1. Number of the relations between each two cities.
+2. Separate cities' name by a space and then enter the length between these two.
+
+
+Example :
+
+    8
+    a b 7
+    c b 2
+    d c 4
+    e d 1
+    a e 1
+    a d 6
+    a c 4
+    b d 3
+    
+    
+<img src="guide/task3.png" width="450">
+
+## Algorithm's used in task3: MST
+* Both kroskal and MST could be used for this question, but considering the query and it's size, MST might be a better approach.
