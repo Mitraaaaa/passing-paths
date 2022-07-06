@@ -409,19 +409,19 @@ void MinSumOfDist(ll graph[mx][mx], ll n)
 
 int main(){
     // task 1
-    // get_car();
-    // count_print_relocate();
+    get_car();
+    count_print_relocate();
 
 
   // task 2A
     // get_pathways();
     // going_to_target();
     // task 2B
-//    pass_certain_nodes();
+  //  pass_certain_nodes();
 
    // task-3
-   get_pathways();
-   MinSumOfDist(dist,plc_num);
+//    get_pathways();
+//    MinSumOfDist(dist,plc_num);
 
     return 0;
 }
